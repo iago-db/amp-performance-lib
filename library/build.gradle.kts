@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,8 +11,7 @@ group = "io.github.kotlin"
 version = "1.0.0"
 
 kotlin {
-    jvm()
-    androidLibrary {
+    android {
         namespace = "org.jetbrains.kotlinx.multiplatform.library.template"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -26,12 +26,16 @@ kotlin {
             jvmTarget = JvmTarget.JVM_11
         }
     }
-    iosArm64()
-    iosSimulatorArm64()
-    linuxX64()
+
+    val xcf = XCFramework("PerformanceTest")
+    iosArm64 { binaries.framework { xcf.add(this) } }
+    iosSimulatorArm64 { binaries.framework { xcf.add(this) } }
 
     sourceSets {
         commonMain.dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
             //put your multiplatform dependencies here
         }
 
